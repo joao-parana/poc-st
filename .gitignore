@@ -1,2 +1,7 @@
 *.parquet
+conf/app.properties
+.vscode/extensions.json
+.vscode/launch.json
+.vscode/settings.json
+__pycache__/
 

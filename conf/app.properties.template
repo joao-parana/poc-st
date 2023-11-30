@@ -1,0 +1,32 @@
+# Valores Default para todas as seções abaixo
+[DEFAULT]
+soma_server = localhost
+apr_stage = DEV
+project_root = /apps/gamma-apr
+apr_root_data_directory = /apps/gamma-apr/data
+rest_server_port = 8970
+app_server_port = 8501
+dbhost = localhost
+dbport = 5432
+dbuser = postgres
+dbdatabase = postgres
+dbpassword = postgres
+# Este valor depende fundamentalmente do throughtput do sistema e serve como dica
+# para parametrizar a barra de progresso na Interface Visual do Sistema
+records_by_second = 1000
+
+[general]
+soma_server = 172.17.0.2
+apr_stage = DEV
+project_root = /volumes/dev/gamma-apr
+apr_root_data_directory = /volumes/dev/gamma-apr/data
+
+
+[database]
+dbhost = 172.17.0.3
+dbport = 54329
+dbuser = postgres
+dbdatabase = postgres
+dbpassword = secret
+dbtarget = Postgres
+
