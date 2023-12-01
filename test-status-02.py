@@ -17,9 +17,6 @@ if "last_api_request" not in st.session_state.keys():
     st.session_state["last_api_request"] = {"uuid": None, "file_uri": None, "completed": None}
 
 
-if "last_progress" not in st.session_state.keys():
-    st.session_state["last_progress"] = 0
-
 # --------------------------------------------------------------------------------
 SOMA_SERVER = "127.0.0.1"  # Teste com SOMA em 'localhost', comente a linha abaixo
 SOMA_SERVER = "34.71.114.51"
@@ -91,7 +88,7 @@ def other_code():
                 submitted = st.form_submit_button(label="Delete")
 
                 if submitted:
-                    print("delete", dataset_name, "last_progress =", st.session_state["last_progress"])
+                    print("delete", dataset_name)
                 else:
                     pass
                     # st.warning("Selecione um dataset para excluir!")
@@ -120,7 +117,7 @@ with st.status("Downloading data...", expanded=True) as status:
             break
         time.sleep(SLEEP_INTERVAL / 4)
     st.success("Contacting the server...")
-    """
+    my_comment = """
     Neste ponto a App já recebeu a resposta do servidor e salvou na session_state
     Exemplo de resposta:
     st.session_state["last_api_request"] = {
@@ -129,22 +126,23 @@ with st.status("Downloading data...", expanded=True) as status:
         'completed': 0,
         'record_count': 0}
     """
-
+    i = 0
+    file_uri = st.session_state["last_api_request"]["file_uri"]
     while True:
-        i = st.session_state["last_progress"]
         response_dict = request_check_acquisition_status_from_gamma(st.session_state["last_api_request"]["uuid"])
         completed = response_dict["completed"]
         st.session_state["last_api_request"]["completed"] = completed
-        # pb_value = min(i + 1, 100)
-        # if i > 99:
+        step = response_dict["step"]
+        record_count = response_dict["record_count"]
+        file_uri = response_dict["file_uri"]
         if completed >= 100:
             print("break while loop")
             break
         i += 1
-        if i % 10 == 0:
-            print("i =", i)
-            status.update(label=f"{completed}% downloaded.")
-        st.session_state["last_progress"] = i
+        if i % 5 == 0:
+            print("step =", step)
+
+        status.update(label=f"{completed}% downloaded.")
         time.sleep(SLEEP_INTERVAL)
 
     st.success("Download complete!")
@@ -152,7 +150,7 @@ with st.status("Downloading data...", expanded=True) as status:
 
 
 def clear_session_state():
-    st.session_state["last_progress"] = 0
+    st.session_state["last_api_request"] = {"uuid": None, "file_uri": None, "completed": None}
 
 
 st.button("Rerun", on_click=clear_session_state)
