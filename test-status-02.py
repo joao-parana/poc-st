@@ -3,6 +3,7 @@ import threading
 import time
 from collections.abc import Callable
 
+import pandas as pd
 import streamlit as st
 
 # --------------------------------------------------------------------------------
@@ -117,12 +118,12 @@ st.success("Você solicitou a aquisição de dados que ocorrerá em background. 
 
 # Monitorando o progresso da aquisição de dados
 with st.status("Downloading data...", expanded=True) as status:
-    print("last_api_request", st.session_state["last_api_request"])
-    while True:
-        completed = st.session_state["last_api_request"]["completed"]
-        if completed is not None:
-            break
-        time.sleep(SLEEP_INTERVAL / 4)
+    # print("last_api_request", st.session_state["last_api_request"])
+    # while True:
+    #     completed = st.session_state["last_api_request"]["completed"]
+    #     if completed is not None:
+    #         break
+    #     time.sleep(SLEEP_INTERVAL / 4)
     st.success("Contacting the server...")
     my_comment = """
     Neste ponto a App já recebeu a resposta do servidor e salvou na session_state
@@ -135,6 +136,7 @@ with st.status("Downloading data...", expanded=True) as status:
     """
     i = 0
     file_uri = st.session_state["last_api_request"]["file_uri"]
+    st.success("Contacting records and getting download status...")
     while True:
         response_dict = request_check_acquisition_status_from_gamma(st.session_state["last_api_request"]["uuid"])
         completed = response_dict["completed"]
@@ -153,7 +155,10 @@ with st.status("Downloading data...", expanded=True) as status:
         time.sleep(SLEEP_INTERVAL)
 
     st.success("Download complete!")
-    status.update(label="Download complete!", state="complete", expanded=False)
+    dataset = pd.read_parquet(file_uri)
+    dataset.index = dataset.index.tz_localize(None)
+    st.success("DataFrame created!")
+    status.update(label="Download complete and DataFrame created", state="complete", expanded=False)
 
 
 def clear_session_state():
