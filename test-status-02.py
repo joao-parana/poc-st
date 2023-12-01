@@ -102,11 +102,18 @@ setup_tasks([other_code])
 build_acquisition_form([dsg])
 
 # Aguardamos a solicitação de aquisição de dados ser enviada pelo usuário
-while True:
-    completed = st.session_state["last_api_request"]["completed"]
-    if completed is not None:
-        break
-    time.sleep(SLEEP_INTERVAL / 4)
+# while True:
+#     completed = st.session_state["last_api_request"]["completed"]
+#     if completed is not None:
+#         break
+#     time.sleep(SLEEP_INTERVAL / 4)
+
+completed = st.session_state["last_api_request"]["completed"]
+if completed is None:
+    st.warning("Favor solicitar a aquisição de dados!")
+    st.stop()
+
+st.success("Você solicitou a aquisição de dados que ocorrerá em background. Acompanhe o progresso abaixo:")
 
 # Monitorando o progresso da aquisição de dados
 with st.status("Downloading data...", expanded=True) as status:
